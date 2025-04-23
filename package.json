@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@tanstack/vue-table": "^8.21.3",
+    "@unovis/ts": "^1.5.1",
+    "@unovis/vue": "^1.5.1",
     "@vee-validate/zod": "^4.15.0",
     "@vueuse/core": "^13.1.0",
     "ant-design-vue": "^4.2.6",

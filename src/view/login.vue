@@ -21,10 +21,9 @@
 </template>
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import { defineProps } from 'vue';
 import loginForm from '@/components/loginForm.vue';
 import { Button } from '@/components/ui/button'
-import gsap from 'gsap';
+import { gsap } from 'gsap';
 import { toast } from 'vue-sonner'
 
 const props = defineProps<{
