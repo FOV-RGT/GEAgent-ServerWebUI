@@ -1,53 +1,93 @@
 <template>
-    <div class="reliatve w-full h-full z-50">
-        <div
-            class="flex bg-[#eca292]/80 flex-col items-center justify-center absolute w-[35%] p-4 h-full rounded-r-2xl z-10">
-            <!-- <h1>111</h1> -->
+    <div class="fixed w-full h-full top-0 flex flex-row justify-start z-50">
+        <div class="flex flex-col w-[35%] h-full rounded-r-2xl z-10 p-6"
+            :class="darkMode ? 'bg-[#161725]/90 text-white' : 'left-card text-gray-800'">
+            <div class="left-card-content flex flex-col items-center justify-center h-full space-y-8 select-none">
+                <!-- <img src="@/assets/亮色logo.png" alt="Logo" class="w-full mx-auto mt-4 mb-2 shadow-lg"> -->
+                <h1 class="text-6xl tracking-wide">GEAgent</h1>
+                <h2 class="text-3xl tracking-wide">Server-WebUI</h2>
+            </div>
         </div>
-        <div
-            class="bg-[#e2dfd0]/10 p-4 flex flex-col justify-center items-center absolute h-full w-[70%] right-0">
+        <div class="p-4 flex flex-col justify-center items-center h-full w-[66%] right-0 min-w-[360px]">
             <!-- 卡片标题 -->
-            <div class="bg-white/80 backdrop-blur-sm shadow-lg rounded-lg p-6 w-full max-w-md mx-auto">
-                <h2 class="text-2xl font-bold text-center text-black mb-6">登录</h2>
-                <!-- 表单内容 -->
-                <form class="space-y-4 md:space-y-6 ">
-                    <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <label for="username" class="text-black font-medium w-full md:w-1/4">用户名</label>
-                        <input type="text" id="username"
-                            class="w-full md:w-3/4 px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-black placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-                            placeholder="请输入用户名">
-                    </div>
-                    <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <label for="password" class="text-black font-medium w-full md:w-1/4">密码</label>
-                        <input type="password" id="password"
-                            class="w-full md:w-3/4 px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-black placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-                            placeholder="请输入密码">
-                    </div>
-                    <!-- 记住我选项 -->
-                    <div class="flex items-center">
-                        <input id="remember" type="checkbox" class="h-4 w-4 bg-white/20 border-white/30 rounded">
-                        <label for="remember" class="ml-2 text-sm text-black">记住我</label>
-                    </div>
-                    <!-- 登录按钮 -->
-                    <button type="submit"
-                        class="w-full py-3 bg-[#7f8ca2] hover:bg-[#7f8ca2]/75 rounded-lg text-black font-medium transition-all duration-200 border border-white/30 backdrop-blur-sm">
-                        登录
-                    </button>
-                    <!-- 其他选项 -->
-                    <div class="text-center text-black text-sm">
-                        <a href="#" class="hover:underline">忘记密码?</a> |
-                        <a href="#" class="hover:underline">注册账号</a>
-                    </div>
-                </form>
+            <div class="right-login-card backdrop-blur-md border shadow-xl rounded-xl p-6 w-full max-w-md mx-auto"
+                :class="darkMode ? 'bg-gray-900/60 border-white/20' : 'bg-[#F9F7F7]/75 border-white/20'">
+                <h2 class="mountedAnimation text-2xl font-medium text-center mb-6 tracking-[0.5em] select-none"
+                    :class="darkMode ? 'text-white' : 'text-gray-800'">登录</h2>
+                <loginForm />
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { Button } from 'ant-design-vue';
+import { ref, watch, onMounted } from 'vue';
+import { defineProps } from 'vue';
+import loginForm from '@/components/loginForm.vue';
+import { Button } from '@/components/ui/button'
+import gsap from 'gsap';
+import { toast } from 'vue-sonner'
+
+const props = defineProps<{
+    darkMode?: Boolean
+}>()
+
+watch(() => props.darkMode, (newValue) => {
+    if (newValue) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+}, { immediate: true });
+
+onMounted(() => {
+    // 创建更精细的时间线
+    const tl = gsap.timeline({
+        defaults: {
+            duration: 0.85,
+            ease: "power3.out"
+        },
+        onComplete: () => {
+            toast.info('It\'s MyGO!!!', {
+                description: '欢迎使用 GEAgent Server-WebUI',
+            })
+        }
+    });
+
+    tl.from('.left-card-content h1', {
+        y: 30,
+        opacity: 0,
+        filter: "blur(12px)",
+        duration: 0.7
+    });
+
+    tl.from('.left-card-content h2', {
+        y: 20,
+        opacity: 0,
+        filter: "blur(8px)",
+        duration: 0.6
+    }, "-=0.5");
+
+    tl.from('.backdrop-blur-md', {
+        opacity: 0,
+        filter: "blur(15px)",
+        scale: 0.92,
+        y: 15,
+        transformOrigin: "center center",
+        duration: 0.7,
+        clearProps: "all" // 确保动画结束后清除所有属性，避免性能问题
+    }, "-=0.3");
+
+    tl.from('.mountedAnimation > *', {
+        opacity: 0,
+        y: 10, 
+        filter: "blur(5px)",
+        stagger: 0.1,
+        duration: 0.5
+    }, "-=0.55");
+});
 
 </script>
 
 <style scoped>
-@import url('@/assets/css/login.css');
+@import url('@/css/login.css');
 </style>

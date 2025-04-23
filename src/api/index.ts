@@ -26,7 +26,7 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(res => {
     return res
 }, error => {
-    console.error('Error:', error);
+    console.error('Error:', error.response);
     return Promise.reject(error.response);
 })
 

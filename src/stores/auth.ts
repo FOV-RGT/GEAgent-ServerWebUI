@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { h, ref, computed } from 'vue'
 import { UserLogin, User, LoginRes } from '@/types/auth'
 import api from '@/api/index'
+import { toast } from 'vue-sonner'
 
 export const useAuthStore = defineStore('auth', () => {
     // 状态
@@ -33,13 +34,24 @@ export const useAuthStore = defineStore('auth', () => {
     async function login(userLogin: UserLogin): Promise<Boolean> {
         try {
             const res = await api.post<LoginRes>('/user/login', userLogin)
+            console.log('Login response:', res.data);
             const { token, message, user } = res.data
+            if (user.role !== 'admin') {
+                toast.error('登录失败', {
+                    description: '非管理员用户无法登录',
+                })
+                return false
+            }
             setToken(token);
             setUser(user);
-            console.log('Login success:', message);
+            toast.success('登录成功', {
+                description: message,
+            })
             return true
         } catch (err) {
-            console.log('Login error:', err);
+            toast.error('登录失败', {
+                description: `${err.data.message}`,
+            })
             return false
         }
     }

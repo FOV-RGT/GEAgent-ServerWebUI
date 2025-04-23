@@ -8,9 +8,33 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AButton: typeof import('ant-design-vue/es')['Button']
+    ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
+    AForm: typeof import('ant-design-vue/es')['Form']
+    AFormItem: typeof import('ant-design-vue/es')['FormItem']
+    AInput: typeof import('ant-design-vue/es')['Input']
+    AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     AuroraBackground: typeof import('./src/components/ui/aurora-background/AuroraBackground.vue')['default']
+    Button: typeof import('./src/components/ui/button/Button.vue')['default']
+    FormControl: typeof import('./src/components/ui/form/FormControl.vue')['default']
+    FormDescription: typeof import('./src/components/ui/form/FormDescription.vue')['default']
+    FormItem: typeof import('./src/components/ui/form/FormItem.vue')['default']
+    FormLabel: typeof import('./src/components/ui/form/FormLabel.vue')['default']
+    FormMessage: typeof import('./src/components/ui/form/FormMessage.vue')['default']
+    Input: typeof import('./src/components/ui/input/Input.vue')['default']
+    Label: typeof import('./src/components/ui/label/Label.vue')['default']
+    LoginForm: typeof import('./src/components/loginForm.vue')['default']
     ParticlesBg: typeof import('./src/components/ui/particles-bg/ParticlesBg.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
+    Toast: typeof import('./src/components/ui/toast/Toast.vue')['default']
+    ToastAction: typeof import('./src/components/ui/toast/ToastAction.vue')['default']
+    ToastClose: typeof import('./src/components/ui/toast/ToastClose.vue')['default']
+    ToastDescription: typeof import('./src/components/ui/toast/ToastDescription.vue')['default']
+    Toaster: typeof import('./src/components/ui/toast/Toaster.vue')['default']
+    ToastProvider: typeof import('./src/components/ui/toast/ToastProvider.vue')['default']
+    ToastTitle: typeof import('./src/components/ui/toast/ToastTitle.vue')['default']
+    ToastViewport: typeof import('./src/components/ui/toast/ToastViewport.vue')['default']
   }
 }
