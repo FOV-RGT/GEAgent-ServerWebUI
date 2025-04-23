@@ -1,7 +1,7 @@
 <template>
     <div class="absolute w-full h-full xl:px-8 xl:py-4 flex items-center justify-center z-[1]"
         :class="darkMode ? 'bg-[#FAF6F5]/15' : 'bg-[#FAF6F5]/15'">
-        <img src="@/assets/All.svg" alt="LOGO" class="fixed w-4/5 filter blur-[16px]">
+        <img src="@/assets/All.svg" alt="LOGO" class="fixed w-4/5 object-contain filter blur-[14px]">
         <div class="w-full h-full backdrop-blur-sm border shadow-xl lg:rounded-2xl
         border-[#fcfcfc]/40 select-none overflow-hidden flex justify-start items-center"
             :class="darkMode ? 'bg-[#FAF6F5]/30' : 'bg-[#FAF6F5]/30'">

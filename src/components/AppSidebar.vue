@@ -55,7 +55,6 @@ let sidebarTL = null
 
 onMounted(() => {
     gsap.set('.sidebar-container', {
-        opacity: systemStore.sidebarOpen ? 1 : 0.5,
         x: systemStore.sidebarOpen ? 0 : '-100%',
         rotateY: systemStore.sidebarOpen ? 4 : 20,
         translateZ: systemStore.sidebarOpen ? -2 : 20
@@ -74,7 +73,6 @@ function sidebarAnimation(isOpen: boolean) {
     if (isOpen) {
         sidebarTL.to('.sidebar-container', {
             duration: 0.35,
-            opacity: 1,
             x: 0,
             rotateY: 4,
             translateZ: -2,
@@ -87,7 +85,6 @@ function sidebarAnimation(isOpen: boolean) {
         // 侧边栏关闭动画
         sidebarTL.to('.sidebar-container', {
             duration: 0.3,
-            opacity: 0.5,
             x: '-100%',
             rotateY: 20,
             translateZ: 20,
@@ -109,6 +106,8 @@ function sidebarAnimation(isOpen: boolean) {
     min-width: 340px;
     height: 100%;
     transform: perspective(800px);
+    will-change: rotateY, translateZ, opacity;
+    transform-style: preserve-3d;
 }
 
 .sidebar {
