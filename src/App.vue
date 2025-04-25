@@ -23,19 +23,26 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Draggable } from "gsap/Draggable";
 import bgEle from "@/components/bgEle.vue";
 import { preloader, ResourceType } from "@/services/preloader";
+import logo from "@/assets/logo.svg";
+import logoGEAgent from "@/assets/logo+GEAgent.svg";
+import all from "@/assets/All.svg";
+import GEsvg from "@/assets/GE.svg";
+import AGENTsvg from "@/assets/AGENT.svg";
+import MyGO from "@/assets/MyGO!!!.svg";
+import AllDeep from "@/assets/DEEP-LOGO+GE+AGENT+MyGO.svg";
 
 const themeStore = useThemeStore();
 const bgElement = ref(null);
 const appReady = ref(false);
 
 const assetsToPreload = [
-    { id: 'logo', url: '/src/assets/logo.svg', type: 'image' },
-    { id: 'logoGEAgent', url: '/src/assets/logo+GEAgent.svg', type: 'image' },
-    { id: 'all', url: '/src/assets/All.svg', type: 'image' },
-    { id: 'GE', url: '/src/assets/GE.svg', type: 'image' },
-    { id: 'AGENT', url: '/src/assets/AGENT.svg', type: 'image' },
-    { id: 'MyGO!!!', url: '/src/assets/MyGO!!!.svg', type: 'image' },
-    { id: 'All-deep', url: '/src/assets/DEEP-LOGO+GE+AGENT+MyGO.svg', type: 'image' },
+    { id: 'logo', url: logo, type: 'image' },
+    { id: 'logoGEAgent', url: logoGEAgent, type: 'image' },
+    { id: 'all', url: all, type: 'image' },
+    { id: 'GE', url: GEsvg, type: 'image' },
+    { id: 'AGENT', url: AGENTsvg, type: 'image' },
+    { id: 'MyGO!!!', url: MyGO, type: 'image' },
+    { id: 'All-deep', url: AllDeep, type: 'image' },
 ]
 
 onBeforeMount(() => {

@@ -37,8 +37,6 @@ declare module 'vue' {
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LoginForm: typeof import('./src/components/loginForm.vue')['default']
     LoginStepper: typeof import('./src/components/loginStepper.vue')['default']
-    MCPManager: typeof import('./src/components/MCPManager.vue')['default']
-    Overview: typeof import('./src/components/overview.vue')['default']
     ParticlesBg: typeof import('./src/components/ui/particles-bg/ParticlesBg.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

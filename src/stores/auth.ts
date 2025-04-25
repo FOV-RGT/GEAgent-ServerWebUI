@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
                 })
                 return false
             }
-            // setToken(token);
+            setToken(token);
             setUser(user);
             toast.success('登录成功', {
                 description: message,

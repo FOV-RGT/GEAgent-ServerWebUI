@@ -1,7 +1,6 @@
 <template>
     <div ref="bgContainer"
         class="bg-black pointer-events-none *:pointer-events-auto overflow-hidden w-full h-full will-change-transform">
-        <!-- 登录页背景元素 -->
         <div
             class="w-full absolute flex flex-col items-center justify-center select-none will-change-transform top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <div ref="bgLogo" class="relative w-3/5 min-w-[320px]">
@@ -34,9 +33,7 @@
                     <loginStepper />
                 </div>
             </div>
-            <!-- 主页背景元素 -->
             <div v-else-if="systemStore.contentType === 'main'" class="">
-                <!-- 主页专用的背景元素 -->
             </div>
         </div>
     </div>

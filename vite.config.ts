@@ -15,17 +15,16 @@ export default defineConfig({
       ],
     }),
   ],
+  base: '/admin/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
     }
   },
   build: {
-    // 设置构建输出目录为Express静态文件目录
-    outDir: path.resolve(__dirname, '../public/admin'),
-    // 如果需要将资源文件放在子目录
+    outDir: '../public/admin', // 输出到服务器静态目录下的 admin 子目录
     assetsDir: 'assets',
-    // 生产环境移除console和debugger
+    emptyOutDir: true,
     minify: 'terser',
     terserOptions: {
       compress: {

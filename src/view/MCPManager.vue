@@ -32,9 +32,9 @@
                                         @click="sortBy(col.key)">
                                         <div class="flex items-center gap-1">
                                             {{ col.label }}
-                                            <ChevronDown v-if="sortColumn === col.key && sortOrder === 'asc'"
+                                            <ChevronDown v-show="sortColumn === col.key && sortOrder === 'asc'"
                                                 class="h-4 w-4" />
-                                            <ChevronUp v-if="sortColumn === col.key && sortOrder === 'desc'"
+                                            <ChevronUp v-show="sortColumn === col.key && sortOrder === 'desc'"
                                                 class="h-4 w-4" />
                                         </div>
                                     </th>
@@ -43,7 +43,7 @@
                                 </tr>
                             </thead>
                             <!-- 表格内容 -->
-                            <tbody class="[&_tr:last-child]:border-0">
+                            <tbody class="border">
                                 <tr v-for="service in paginatedData" :key="service.id"
                                     class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                     <td class="p-4 align-middle">{{ service.name }}</td>
@@ -104,16 +104,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
-import {
-    Button
-} from '@/components/ui/button';
-import {
-    Input
-} from '@/components/ui/input';
-import {
-    RefreshCw, ChevronDown, ChevronUp, Plus, Edit, Trash, Play, Pause
-} from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { RefreshCw, ChevronDown, ChevronUp, Plus, Edit, Trash, Play, Pause } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
+import { useServerConfigStore } from '@/stores/serverConfig';
+
+const serverConfigStore = useServerConfigStore();
 
 interface Service {
     id: string;
@@ -125,16 +122,30 @@ interface Service {
     lastUpdated: Date;
 }
 
+onMounted(async () => {
+    nextTick(() => {
+        try {
+            services.value = generateMockData();
+            isDataLoading.value = false;
+        } catch (error) {
+            console.error('初始化数据时发生错误:', error);
+            isDataLoading.value = false;
+            toast.error('加载数据失败，请刷新页面重试');
+        }
+    });
+    await serverConfigStore.getMCPConfigs();
+});
+
 // 列定义
 const columns = [
     { key: 'name', label: 'Server名称' },
+    { key: 'lastUpdated', label: '版本' },
+    { key: 'lastUpdated', label: '连接方式' },
     { key: 'status', label: '连接状态' },
     { key: 'type', label: '描述' },
     { key: 'lastUpdated', label: '最后更新' },
 ];
 
-// 控制组件状态
-const isComponentMounted = ref(false);
 const isDataLoading = ref(true);
 
 // 模拟数据
@@ -172,8 +183,6 @@ const sortColumn = ref('');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 
 function sortBy(column: string) {
-    if (!isComponentMounted.value) return;
-
     if (sortColumn.value === column) {
         sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
     } else {
@@ -272,8 +281,6 @@ function getStatusClass(status: string): string {
 
 // 操作函数 - 添加错误处理和组件挂载检查
 function toggleService(service: Service) {
-    if (!isComponentMounted.value) return;
-
     try {
         const newStatus = service.status === '运行中' ? '已停止' : '运行中';
         service.status = newStatus;
@@ -285,13 +292,10 @@ function toggleService(service: Service) {
 }
 
 function editService(service: Service) {
-    if (!isComponentMounted.value) return;
     toast.info(`编辑服务 ${service.name}`);
 }
 
 function deleteService(service: Service) {
-    if (!isComponentMounted.value) return;
-
     try {
         services.value = services.value.filter(s => s.id !== service.id);
         toast.success(`服务 ${service.name} 已删除`);
@@ -302,18 +306,14 @@ function deleteService(service: Service) {
 }
 
 function openAddModal() {
-    if (!isComponentMounted.value) return;
     toast.info('添加新服务');
 }
 
 function refreshData() {
-    if (!isComponentMounted.value) return;
-
     try {
         isDataLoading.value = true;
         // 模拟异步加载
         setTimeout(() => {
-            if (!isComponentMounted.value) return;
             services.value = generateMockData();
             isDataLoading.value = false;
             toast.success('数据已刷新');
@@ -325,26 +325,8 @@ function refreshData() {
     }
 }
 
-// 生命周期钩子
-onMounted(() => {
-    isComponentMounted.value = true;
-    // 延迟加载数据，确保组件已完全挂载
-    nextTick(() => {
-        try {
-            services.value = generateMockData();
-            isDataLoading.value = false;
-        } catch (error) {
-            console.error('初始化数据时发生错误:', error);
-            isDataLoading.value = false;
-            toast.error('加载数据失败，请刷新页面重试');
-        }
-    });
-});
 
-// 处理组件卸载
-onUnmounted(() => {
-    isComponentMounted.value = false;
-});
+
 </script>
 
 <style scoped></style>

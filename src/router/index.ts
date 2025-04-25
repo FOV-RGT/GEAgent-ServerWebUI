@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
 
+
 const routes = [
     {
         path: '/',
@@ -16,11 +17,12 @@ const routes = [
         component: MainManager,
         beforeEnter(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
             const authStore = useAuthStore()
+            console.log('authStore', authStore.isAuthenticated);
             if (authStore.isAuthenticated) {
                 next()
             }else {
                 next({ path: '/login' })
-            }            
+            }          
         }
     },
     {
@@ -31,7 +33,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/admin'),
+    history: createWebHistory('/admin/'),
     routes
 })
 
