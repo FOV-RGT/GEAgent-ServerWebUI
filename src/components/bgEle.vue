@@ -197,8 +197,17 @@ function loadCompleteAnimation() {
             bgContainer.value.classList.remove('bg-black');
             bgContainer.value.style.backgroundColor = 'transparent'
             systemStore.animationId = 'loginCardIn'
+            if (route.name === 'login') {
+                loadAnimationToLogin(tl)
+            } else {
+                loadAnimationToMain(tl)
+                systemStore.animationId = 'mainIn'
+            }
         }
     })
+}
+
+function loadAnimationToLogin(tl) {
     tl.to(bgContent.value, {
         duration: 0.8,
         width: '33.33%',
@@ -224,6 +233,18 @@ function loadCompleteAnimation() {
         duration: 0.5,
         ease: "back.out(1.7)"
     }, "-=0.4");
+}
+
+function loadAnimationToMain(tl) {
+    tl.to(bgContent.value, {
+        duration: 1.2,
+        y: '100%',
+        ease: "power4.inOut",
+        onComplete: () => {
+            bgContent.value.style.display = 'none'
+            systemStore.setContent('main')
+        }
+    })
 }
 
 

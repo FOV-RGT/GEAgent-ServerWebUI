@@ -7,7 +7,7 @@
             </div>
             <div class="relative w-full h-full px-10 flex flex-col justify-start items-center gap-16 z-10">
                 <button v-for="(item, index) in menus" :key="index" class="menuButton menu-item-3d w-full h-24 rounded-[20px] text-2xl font-medium
-                    backdrop-blur-md shadow-lg">
+                    backdrop-blur-md shadow-lg" @click="handleMenuClick(item.view)">
                     <div class="flex items-center justify-center gap-3">
                         <component :is="item.icon" class="w-6 h-6" />
                         <span>{{ item.title }}</span>
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { Home, Server, Search, Settings } from "lucide-vue-next"
-import { onMounted, ref, watch, onUnmounted } from 'vue'
+import { onMounted, ref, watch, onUnmounted, defineEmits } from 'vue'
 import { useSystemStore } from '@/stores/system'
 import { gsap } from 'gsap'
 
@@ -32,21 +32,24 @@ const props = defineProps<{
     darkMode?: boolean
 }>()
 const systemStore = useSystemStore()
+const emit = defineEmits(['toggleView'])
+
+
 
 const menus = [
     {
         title: "概览",
-        url: "#",
+        view: "Overview",
         icon: Home,
     },
     {
         title: "MCP",
-        url: "#",
+        view: "MCPManager",
         icon: Server,
     },
     {
         title: "设置",
-        url: "#",
+        view: "Settings",
         icon: Settings,
     }
 ];
@@ -94,6 +97,12 @@ function sidebarAnimation(isOpen: boolean) {
             }
         });
     }
+}
+
+function handleMenuClick(view) {
+    console.log(view);
+    
+    emit('toggleView', view)
 }
 
 

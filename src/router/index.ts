@@ -8,8 +8,7 @@ import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 const routes = [
     {
         path: '/',
-        redirect: '/login',
-        name: 'login'
+        redirect: '/login'
     },
     {
         path: '/main',

@@ -34,5 +34,6 @@ export const useSystemStore = defineStore('system', () => {
         currentRoute,
         setElement,
         setContent,
+        animationId
     }
 })
