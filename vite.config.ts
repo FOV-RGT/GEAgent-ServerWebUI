@@ -36,7 +36,7 @@ export default defineConfig({
   },
   // 开发时的代理设置，用于API请求转发
   server: {
-    port: 5555,
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://localhost:3000', // Express服务器地址

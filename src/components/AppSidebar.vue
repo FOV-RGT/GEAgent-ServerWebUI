@@ -35,12 +35,12 @@ const systemStore = useSystemStore()
 
 const menus = [
     {
-        title: "首页",
+        title: "概览",
         url: "#",
         icon: Home,
     },
     {
-        title: "MCP Server管理",
+        title: "MCP",
         url: "#",
         icon: Server,
     },

@@ -1,11 +1,38 @@
 import { defineStore } from 'pinia'
 import { h, ref, computed } from 'vue'
 import { toast } from 'vue-sonner'
+import { gsap } from 'gsap'
 
-export const useSystemStore = defineStore('system', ()=> {
+export const useSystemStore = defineStore('system', () => {
     const sidebarOpen = ref(true)
+    const isMobile = ref(false)
+    const contentType = ref('login')
+    const elementRef = ref(null)
+    const currentRoute = ref(null)
+    const animationId = ref(null)
+
+    const updateIsMobile = () => {
+            isMobile.value = window.innerWidth < 768;
+        };
+    
+    window.addEventListener('resize', updateIsMobile);
+    updateIsMobile();
+
+    function setElement(el) {
+        elementRef.value = el
+    }
+    
+    function setContent(type) {
+        contentType.value = type
+    }
 
     return {
-        sidebarOpen
+        sidebarOpen,
+        isMobile,
+        contentType,
+        elementRef,
+        currentRoute,
+        setElement,
+        setContent,
     }
 })
