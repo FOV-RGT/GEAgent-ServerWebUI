@@ -8,9 +8,11 @@
                         <RefreshCw class="h-4 w-4 mr-2" :class="{ 'animate-spin': isDataLoading }" />
                         {{ isDataLoading ? '加载中...' : '刷新' }}
                     </Button>
-                    <Button @click="openAddModal">
-                        <Plus class="h-4 w-4 mr-2" />添加服务
-                    </Button>
+                    <editComponent :darkMode="darkMode" @add="addServer" type="add">
+                        <Button>
+                            <Plus class="h-4 w-4 mr-2" />添加服务
+                        </Button>
+                    </editComponent>
                 </div>
             </div>
             <div v-if="isDataLoading && !services.length" class="w-full flex justify-center items-center py-20">
@@ -44,38 +46,38 @@
                             </thead>
                             <!-- 表格内容 -->
                             <tbody class="border">
-                                <tr v-for="service in paginatedData" :key="service.id"
+                                <tr v-for="(server, index) in paginatedData" :key="index"
                                     class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                    <td class="p-4 align-middle">{{ service.name }}</td>
+                                    <td class="p-4 align-middle">{{ server.name }}</td>
+                                    <td class="p-4 align-middle">{{ server.version }}</td>
+                                    <td class="p-4 align-middle">{{ server.method }}</td>
                                     <td class="p-4 align-middle">
-                                        <span :class="getStatusClass(service.status)"
+                                        <span :class="getStateClass(server.status.state)"
                                             class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-                                            {{ service.status }}
+                                            {{ server.status.state }}
                                         </span>
                                     </td>
-                                    <td class="p-4 align-middle">{{ service.type }}</td>
-                                    <td class="p-4 align-middle">{{ formatDate(service.lastUpdated) }}</td>
+                                    <td class="p-4 align-middle">{{ server.description }}</td>
+                                    <td class="p-4 align-middle">{{ formatDate(server.status.lastUpdated) }}</td>
                                     <td class="p-4 align-middle text-right">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <Button variant="ghost" size="sm" @click="toggleService(service)">
-                                                <span v-if="service.status === '运行中'">
-                                                    <Pause class="h-4 w-4 mr-1" />暂停
+                                        <div class="flex items-center justify-end gap-4">
+                                            <div @click="toggleServer(server)" class="cursor-pointer">
+                                                <span v-if="server.status.state === 'connected'">
+                                                    <Pause />
                                                 </span>
                                                 <span v-else>
-                                                    <Play class="h-4 w-4 mr-1" />启动
+                                                    <Play />
                                                 </span>
-                                            </Button>
-                                            <Button variant="ghost" size="sm" @click="editService(service)">
-                                                <Edit class="h-4 w-4" />
-                                            </Button>
-                                            <Button variant="ghost" size="sm" @click="deleteService(service)">
-                                                <Trash class="h-4 w-4" />
-                                            </Button>
+                                            </div>
+                                            <editComponent :darkMode="darkMode" :server="server" @edit="updateServer" type="edit">
+                                                <Edit class="cursor-pointer" />
+                                            </editComponent>
+                                            <Trash class="cursor-pointer" @click="deleteServer(server)" />
                                         </div>
                                     </td>
                                 </tr>
                                 <tr v-if="paginatedData.length === 0">
-                                    <td colspan="8" class="p-8 text-center text-muted-foreground">没有找到匹配的服务</td>
+                                    <td colspan="8" class="p-8 text-center text-muted-foreground">暂未配置MCP Server</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -106,34 +108,33 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RefreshCw, ChevronDown, ChevronUp, Plus, Edit, Trash, Play, Pause } from 'lucide-vue-next';
+import { RefreshCw, ChevronDown, ChevronUp, Plus, Trash, Play, Pause, Edit } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import { useServerConfigStore } from '@/stores/serverConfig';
+import { MCPConfigType } from '@/types/systemConfig';
+import editComponent from '@/components/editComponent.vue';
+
+
+
+
 
 const serverConfigStore = useServerConfigStore();
 
-interface Service {
-    id: string;
-    name: string;
-    status: '已连接' | '已停止' | '错误';
-    type: string;
-    cpu: number;
-    memory: number;
-    lastUpdated: Date;
-}
+const props = defineProps<{
+    darkMode?: boolean
+}>();
+
 
 onMounted(async () => {
-    nextTick(() => {
-        try {
-            services.value = generateMockData();
-            isDataLoading.value = false;
-        } catch (error) {
-            console.error('初始化数据时发生错误:', error);
-            isDataLoading.value = false;
-            toast.error('加载数据失败，请刷新页面重试');
-        }
-    });
-    await serverConfigStore.getMCPConfigs();
+    try {
+        isDataLoading.value = true;
+        await serverConfigStore.init();
+        isDataLoading.value = false;
+    } catch (error) {
+        console.error('初始化数据时发生错误:', error);
+        isDataLoading.value = false;
+        toast.error('加载数据失败，请刷新页面重试');
+    }
 });
 
 // 列定义
@@ -148,35 +149,7 @@ const columns = [
 
 const isDataLoading = ref(true);
 
-// 模拟数据
 const services = ref<Service[]>([]);
-
-// 生成模拟数据 - 添加错误处理
-function generateMockData() {
-    try {
-        const types = ['Web服务', '计算节点', '数据库', '缓存', '消息队列'];
-        const statuses: ('已连接' | '已停止' | '错误')[] = ['已连接', '已停止', '错误'];
-
-        const mockData: Service[] = [];
-
-        for (let i = 1; i <= 20; i++) {
-            mockData.push({
-                id: `srv-${i.toString().padStart(3, '0')}`,
-                name: `MCP-Service-${i}`,
-                status: statuses[Math.floor(Math.random() * statuses.length)],
-                type: types[Math.floor(Math.random() * types.length)],
-                cpu: Math.floor(Math.random() * 100),
-                memory: Math.floor(Math.random() * 1024) + 128,
-                lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)),
-            });
-        }
-
-        return mockData;
-    } catch (error) {
-        console.error('生成模拟数据时发生错误:', error);
-        return [];
-    }
-}
 
 // 排序功能
 const sortColumn = ref('');
@@ -200,17 +173,13 @@ const currentPage = ref(1);
 
 // 计算属性：过滤后的数据
 const filteredData = computed(() => {
-    if (!services.value || !services.value.length) return [];
-
-    let result = [...services.value];
-
-    // 应用搜索过滤
+    const MCPConfigs = serverConfigStore.MCPConfigs;
+    if (!MCPConfigs || !MCPConfigs.length) return [];
+    let result = [...MCPConfigs];
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
-        result = result.filter(service =>
-            service.id.toLowerCase().includes(query) ||
-            service.name.toLowerCase().includes(query) ||
-            service.type.toLowerCase().includes(query)
+        result = result.filter(config =>
+            config.name.includes(query)
         );
     }
 
@@ -220,7 +189,6 @@ const filteredData = computed(() => {
             try {
                 const aValue = a[sortColumn.value as keyof Service];
                 const bValue = b[sortColumn.value as keyof Service];
-
                 if (aValue < bValue) return sortOrder.value === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortOrder.value === 'asc' ? 1 : -1;
                 return 0;
@@ -237,7 +205,6 @@ const filteredData = computed(() => {
 // 计算属性：分页后的数据
 const paginatedData = computed(() => {
     if (!filteredData.value.length) return [];
-
     const start = (currentPage.value - 1) * pageSize;
     return filteredData.value.slice(start, start + pageSize);
 });
@@ -250,7 +217,6 @@ const totalPages = computed(() =>
 // 格式化日期
 function formatDate(date: Date): string {
     if (!date) return '---';
-
     try {
         return new Intl.DateTimeFormat('zh-CN', {
             year: 'numeric',
@@ -266,13 +232,13 @@ function formatDate(date: Date): string {
 }
 
 // 根据状态获取样式类
-function getStatusClass(status: string): string {
-    switch (status) {
-        case '已连接':
+function getStateClass(state) {
+    switch (state) {
+        case 'connected':
             return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-        case '已停止':
+        case 'disconnected':
             return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-        case '错误':
+        case 'error':
             return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
         default:
             return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
@@ -280,44 +246,37 @@ function getStatusClass(status: string): string {
 }
 
 // 操作函数 - 添加错误处理和组件挂载检查
-function toggleService(service: Service) {
+async function toggleServer(server) {
     try {
-        const newStatus = service.status === '运行中' ? '已停止' : '运行中';
-        service.status = newStatus;
-        toast.success(`服务 ${service.name} 已${newStatus === '运行中' ? '启动' : '停止'}`);
+        const newState = server.status.state === 'connected' ? 'disconnected' : 'connected';
+        server.status.state = newState;
+        await serverConfigStore.updateMCPConfig(server);
+        toast.success(`服务 ${server.name} 已${newState === 'connected' ? '启动' : '停止'}`);
     } catch (error) {
         console.error('切换服务状态时发生错误:', error);
         toast.error('操作失败，请稍后重试');
     }
 }
 
-function editService(service: Service) {
-    toast.info(`编辑服务 ${service.name}`);
+async function updateServer({ config, callback }) {
+    await serverConfigStore.updateMCPConfig(config)
+    callback()
 }
 
-function deleteService(service: Service) {
-    try {
-        services.value = services.value.filter(s => s.id !== service.id);
-        toast.success(`服务 ${service.name} 已删除`);
-    } catch (error) {
-        console.error('删除服务时发生错误:', error);
-        toast.error('删除失败，请稍后重试');
-    }
+async function addServer({ config, callback }) {
+    await serverConfigStore.addMCPConfig(config)
+    callback()
 }
 
-function openAddModal() {
-    toast.info('添加新服务');
+async function deleteServer(server) {
+    await serverConfigStore.deleteMCPConfig(server.name)
 }
 
-function refreshData() {
+async function refreshData() {
     try {
         isDataLoading.value = true;
-        // 模拟异步加载
-        setTimeout(() => {
-            services.value = generateMockData();
-            isDataLoading.value = false;
-            toast.success('数据已刷新');
-        }, 300);
+        await serverConfigStore.getMCPConfigs()
+        isDataLoading.value = false
     } catch (error) {
         console.error('刷新数据时发生错误:', error);
         isDataLoading.value = false;

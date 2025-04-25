@@ -17,12 +17,12 @@
                         @click="toggleSidebar(false)" v-show="systemStore.sidebarOpen" />
                     <h1 class="text-2xl font-semibold text-center">{{ currentTitle() }}</h1>
                     <Avatar>
-                        <AvatarImage src="https://avatars.githubusercontent.com/u/124599" />
+                        <AvatarImage :src="getPreRes('defaultAvatar')" />
                         <AvatarFallback>管理员头像</AvatarFallback>
                     </Avatar>
                 </div>
                 <Transition name="fade" mode="out-in" class="mainContent  w-full h-full">
-                    <component :is="componentMap[currentView]" />
+                    <component :is="componentMap[currentView]" :darkMode="darkMode" />
                 </Transition>
             </main>
         </div>
@@ -36,6 +36,7 @@ import { PanelRightOpen, PanelRightClose } from "lucide-vue-next"
 import { useSystemStore } from '@/stores/system'
 import { gsap } from 'gsap'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { preloader } from "@/services/preloader";
 
 
 
@@ -149,12 +150,20 @@ function toggleView(view) {
 
 function currentTitle() {
     const titles = {
-        'Overview': '概览',
-        'MCPManager': 'MCP管理',
+        'Overview': '信息概览',
+        'MCPManager': 'MCP Server管理',
         'Settings': '设置'
     }
     return titles[currentView.value] || '概览'
 }
+
+
+function getPreRes(id) {
+    const resource = preloader.resources.find(r => r.id === id)
+    return resource && resource.loaded ? resource.url : ''
+}
+
+
 
 </script>
 

@@ -100,8 +100,6 @@ function sidebarAnimation(isOpen: boolean) {
 }
 
 function handleMenuClick(view) {
-    console.log(view);
-    
     emit('toggleView', view)
 }
 

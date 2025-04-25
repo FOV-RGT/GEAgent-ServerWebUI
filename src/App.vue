@@ -30,6 +30,7 @@ import GEsvg from "@/assets/GE.svg";
 import AGENTsvg from "@/assets/AGENT.svg";
 import MyGO from "@/assets/MyGO!!!.svg";
 import AllDeep from "@/assets/DEEP-LOGO+GE+AGENT+MyGO.svg";
+import defaultAvatar from "@/assets/爱门.jpg";
 
 const themeStore = useThemeStore();
 const bgElement = ref(null);
@@ -43,6 +44,7 @@ const assetsToPreload = [
     { id: 'AGENT', url: AGENTsvg, type: 'image' },
     { id: 'MyGO!!!', url: MyGO, type: 'image' },
     { id: 'All-deep', url: AllDeep, type: 'image' },
+    { id: 'defaultAvatar', url: defaultAvatar, type: 'image' },
 ]
 
 onBeforeMount(() => {

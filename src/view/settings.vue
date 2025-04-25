@@ -46,7 +46,7 @@
                 <div class="flex flex-col gap-4">
                     <div class="flex items-center gap-4">
                         <Avatar>
-                            <AvatarImage src="https://avatars.githubusercontent.com/u/124599" />
+                            <AvatarImage :src="getPreRes('defaultAvatar')" />
                             <AvatarFallback>管理员</AvatarFallback>
                         </Avatar>
                         <div class="flex flex-col">
@@ -172,6 +172,7 @@ import {
     KeyRound
 } from 'lucide-vue-next';
 import packageJson from '@/../package.json';
+import { preloader } from '@/services/preloader';
 
 
 
@@ -210,6 +211,16 @@ function resetSettings() {
         });
     }
 }
+
+function getPreRes(id) {
+    const resource = preloader.resources.find(r => r.id === id)
+    return resource && resource.loaded ? resource.url : ''
+}
+
+
+
+
+
 </script>
 
 <style scoped></style>
