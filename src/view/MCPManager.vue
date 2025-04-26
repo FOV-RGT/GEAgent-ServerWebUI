@@ -15,7 +15,7 @@
                     </editComponent>
                 </div>
             </div>
-            <div v-if="isDataLoading && !services.length" class="w-full flex justify-center items-center py-20">
+            <div v-if="isDataLoading && !MCPConfigs.length" class="w-full flex justify-center items-center py-20">
                 <div class="flex flex-col items-center">
                     <RefreshCw class="h-10 w-10 animate-spin mb-4 text-gray-400" />
                     <span class="text-gray-500">加载数据中...</span>
@@ -149,7 +149,7 @@ const columns = [
 
 const isDataLoading = ref(true);
 
-const services = ref<Service[]>([]);
+const MCPConfigs = ref<MCPConfigType[]>([]);
 
 // 排序功能
 const sortColumn = ref('');
@@ -173,9 +173,9 @@ const currentPage = ref(1);
 
 // 计算属性：过滤后的数据
 const filteredData = computed(() => {
-    const MCPConfigs = serverConfigStore.MCPConfigs;
-    if (!MCPConfigs || !MCPConfigs.length) return [];
-    let result = [...MCPConfigs];
+    MCPConfigs.value = serverConfigStore.MCPConfigs;
+    if (!MCPConfigs.value || !MCPConfigs.value.length) return [];
+    let result = [...MCPConfigs.value];
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
         result = result.filter(config =>
@@ -187,8 +187,8 @@ const filteredData = computed(() => {
     if (sortColumn.value) {
         result.sort((a, b) => {
             try {
-                const aValue = a[sortColumn.value as keyof Service];
-                const bValue = b[sortColumn.value as keyof Service];
+                const aValue = a[sortColumn.value as keyof MCPConfigType];
+                const bValue = b[sortColumn.value as keyof MCPConfigType];
                 if (aValue < bValue) return sortOrder.value === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortOrder.value === 'asc' ? 1 : -1;
                 return 0;

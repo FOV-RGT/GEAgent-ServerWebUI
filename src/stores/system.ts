@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 import { h, ref, computed } from 'vue'
-import { toast } from 'vue-sonner'
-import { gsap } from 'gsap'
 
 export const useSystemStore = defineStore('system', () => {
     const sidebarOpen = ref(true)

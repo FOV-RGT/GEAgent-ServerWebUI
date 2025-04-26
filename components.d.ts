@@ -38,7 +38,6 @@ declare module 'vue' {
     DialogTrigger: typeof import('./src/components/ui/dialog/DialogTrigger.vue')['default']
     DonutChart: typeof import('./src/components/ui/chart-donut/DonutChart.vue')['default']
     EditComponent: typeof import('./src/components/editComponent.vue')['default']
-    EditServer: typeof import('./src/components/editServer.vue')['default']
     FormControl: typeof import('./src/components/ui/form/FormControl.vue')['default']
     FormDescription: typeof import('./src/components/ui/form/FormDescription.vue')['default']
     FormItem: typeof import('./src/components/ui/form/FormItem.vue')['default']

@@ -34,17 +34,16 @@ import defaultAvatar from "@/assets/爱门.jpg";
 
 const themeStore = useThemeStore();
 const bgElement = ref(null);
-const appReady = ref(false);
 
 const assetsToPreload = [
-    { id: 'logo', url: logo, type: 'image' },
-    { id: 'logoGEAgent', url: logoGEAgent, type: 'image' },
-    { id: 'all', url: all, type: 'image' },
-    { id: 'GE', url: GEsvg, type: 'image' },
-    { id: 'AGENT', url: AGENTsvg, type: 'image' },
-    { id: 'MyGO!!!', url: MyGO, type: 'image' },
-    { id: 'All-deep', url: AllDeep, type: 'image' },
-    { id: 'defaultAvatar', url: defaultAvatar, type: 'image' },
+    { id: 'logo', url: logo, type: 'image' as ResourceType },
+    { id: 'logoGEAgent', url: logoGEAgent, type: 'image' as ResourceType },
+    { id: 'all', url: all, type: 'image' as ResourceType },
+    { id: 'GE', url: GEsvg, type: 'image' as ResourceType },
+    { id: 'AGENT', url: AGENTsvg, type: 'image' as ResourceType  },
+    { id: 'MyGO!!!', url: MyGO, type: 'image' as ResourceType },
+    { id: 'All-deep', url: AllDeep, type: 'image' as ResourceType },
+    { id: 'defaultAvatar', url: defaultAvatar, type: 'image' as ResourceType },
 ]
 
 onBeforeMount(() => {
